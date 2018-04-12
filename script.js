@@ -1,11 +1,9 @@
-var gameSize = 10;
+var gameSize = 7;
 var gameData = generateGameData(gameSize);
 var lastClicked = null;
 var score = {me: 0, com: 0};
 var doneScores = [];
-
-/* Guarda o ponto superior esquerdo de um score já fechado para printar o quadrado colorido */
-var doneScoresIds = {};
+var doneScoresIds = {}; // Guarda o ponto superior esquerdo de um score já fechado para printar o quadrado colorido
 
 /*
  * Gera uma lista com todos pontos do jogo
@@ -43,7 +41,10 @@ function generateGameData(size)
  * em que falta apenas um caminho a ser marcado
  * A segunda melhor será um quadrado aleatório onde faltem 4 caminhos para completar
  * A terceira melhor será um quadrado aleatório onde faltem 3 caminhos para completar
- * A ultima opção será um quadrado aleatório onde faltem 2 caminhos para completar, dando assim um ponto para o adversário
+ * A ultima opção´será um quadrado aleatório onde faltem 2 caminhos para completar, dando assim um ponto para o adversário
+ * TODO: Um caminho é escolhido pelo computador verificando se no quadrado formado a direita e abaixo do ponto não deixará 
+ * apenas um caminho livre para o oponente marcar o ponto, porém não verifica os outros quadrados relacionados aquele caminho,
+ * fazer com que verifique todos os quadrados relacionados ao caminho escolhido
  */
 function computerChoice(data)
 {
@@ -114,12 +115,11 @@ function getRandomPath(bestPath)
 	var size = 0;
 	var number = 0;
 
-	console.log(bestPath)
-
 	if (bestPath.four.length > 0) {
 		size = bestPath.four.length - 1;
 		number = Math.round(Math.random()*size);
 		quadrant = Math.round(Math.random()*(bestPath.four[number].length - 1));
+		conn = Math.round(Math.random()*(bestPath.four[number][quadrant].length - 1));
 		
 		return bestPath.four[number][quadrant][conn];
 	}
@@ -128,6 +128,7 @@ function getRandomPath(bestPath)
 		size = bestPath.three.length - 1;
 		number = Math.round(Math.random()*size);
 		quadrant = Math.round(Math.random()*(bestPath.three[number].length -1));
+		conn = Math.round(Math.random()*(bestPath.three[number][quadrant].length - 1));
 
 		return bestPath.three[number][quadrant][conn];
 	}
@@ -136,6 +137,7 @@ function getRandomPath(bestPath)
 		size = bestPath.two.length - 1;
 		number = Math.round(Math.random()*size);
 		quadrant = Math.round(Math.random()*(bestPath.two[number].length -1));
+		conn = Math.round(Math.random()*(bestPath.two[number][quadrant].length - 1));
 
 		return bestPath.two[number][quadrant][conn];
 	}
@@ -146,8 +148,8 @@ function getRandomPath(bestPath)
 */
 function getAllDotScoreOptions(dotId) {
 	var idArr = dotId.split('-');
-	var line = idArr[0];
-	var col = idArr[1];
+	var line = parseInt(idArr[0]);
+	var col = parseInt(idArr[1]);
 	var connCount = 0;
 	var {upperRightQuadrantPathArr, upperLeftQuadrantPathArr, lowerRightQuadrantPathArr, lowerLeftQuadrantPathArr} = getDotPositionsArr(line, col);
 
@@ -210,8 +212,8 @@ function renderGameBoard(data)
 {	
 	for (var i in data ) {
 		let dotId = i;
-		let line = i.split('-')[0];
-		let column = i.split('-')[1];
+		let line = parseInt(i.split('-')[0]);
+		let column = parseInt(i.split('-')[1]);
 
 		renderDot(data[i].posX, data[i].posY, dotId);
 	}
@@ -221,8 +223,8 @@ function renderGameBoard(data)
 	for (let c in connsList) {	
 		if (connsList[c]) {
 			let dotsId = connsList[c].split('/');
-			let originDot = dotsId[0].split('-');
-			let destinyDot = dotsId[1].split('-');
+			let originDot = dotsId[0].split('-').map((n) => parseInt(n));
+			let destinyDot = dotsId[1].split('-').map((n) => parseInt(n));
 
 			if (originDot[0] == destinyDot[0] && originDot[1] > destinyDot[1]) {
 				direction = 'left';
@@ -331,6 +333,7 @@ function renderScores(posX, posY, dotId, player)
 
 /**
  * Ação disparada no evento onclick dos pontos na tela, recebe o evento como parametro
+ * TODO: Nâo redesenhar o board ao adicionar uma conexão, chamar diretamente a função para desenhar a mesma
  */
 function handleDotClick(e) 
 {
@@ -391,8 +394,8 @@ function getQuadrantPathStatus(quadrantPathArr)
  */
 function setScores(id, player) {
 	var idArr = id.split('-');
-	var line = idArr[0];
-	var col = idArr[1];
+	var line = parseInt(idArr[0]);
+	var col = parseInt(idArr[1]);
 	var scores = getDotPositionsArr(line, col);
 	var tempScore = 0;
 
@@ -435,6 +438,7 @@ function setScores(id, player) {
 
 /*
  * Retorna o id de todos os pontos relacionados com um determinado ponto
+ * TODO: melhorar o código que define quais pontos não existem
  */
 function getDotPositionsArr(line, col)
 {
@@ -604,8 +608,6 @@ function getDotPositionsArr(line, col)
  */
 function checkScoreIsAvailable(score, player) 
 {	
-
-	console.log(score)
 	// junta o array de caminhos em uma string
 	var scoreStr = score.join('/'); 
 	var initialDotId = getLowerDotFromPathArr(score);
@@ -633,8 +635,8 @@ function getLowerDotFromPathArr(pathArr) {
 		// Pega só o primeiro ponto pois o path sempre é salvo do menor para o maior
 		let dotId = pathArr[i].split('/')[0]; 
 
-		line = dotId.split('-')[0];
-		col = dotId.split('-')[1];
+		line = parseInt(dotId.split('-')[0]);
+		col = parseInt(dotId.split('-')[1]);
 
 		if (lowerLine == 0) {
 			lowerLine = line;
@@ -669,10 +671,10 @@ function setConnection(id, lastClickedId)
 
 	var arr = id.split('-');
 	var lastArr = lastClickedId.split('-');
-	var line = arr[0];
-	var col = arr[1];
-	var lastLine = lastArr[0];
-	var lastCol = lastArr[1];
+	var line = parseInt(arr[0]);
+	var col = parseInt(arr[1]);
+	var lastLine = parseInt(lastArr[0]);
+	var lastCol = parseInt(lastArr[1]);
 	
 	// Não importa a ordem do clique, sempre guarda o caminho que seja do menor ponto para o maior
 	if (line > lastLine || (line == lastLine && col > lastCol)) {
@@ -697,10 +699,10 @@ function checkConnectionIsAllowed(id, lastClickedId)
 	var pos = id.split('-');
 	var lastPos = lastClickedId.split('-');
 
-	var line = pos[0];
-	var col = pos[1];
-	var lastLine = lastPos[0];
-	var lastCol = lastPos[1];
+	var line = parseInt(pos[0]);
+	var col = parseInt(pos[1]);
+	var lastLine = parseInt(lastPos[0]);
+	var lastCol = parseInt(lastPos[1]);
 	
 	// Se clicar no mesmo ponto
 	if (line == lastLine && col == lastCol) {
