@@ -9,7 +9,7 @@ var doneScoresIds = {}; // Guarda o ponto superior esquerdo de um score já fech
  * Gera uma lista com todos pontos do jogo
  */
 function generateGameData(size)
-{	
+{
 	var gameData = [];
 	var posX = 10;
 	var posY = 10;
@@ -17,9 +17,9 @@ function generateGameData(size)
 
 	for (let i = 1; i <= size; i++) {
 		for(let j = 1; j <= size; j++) {
-			
+
 			let dotId = i + '-' + j;
-			
+
 			gameData[dotId] = {
 				posX: posX,
 				posY: posY
@@ -37,12 +37,12 @@ function generateGameData(size)
 
 /*
  * Função que define qual jogada o computador irá fazer
- * A Melhor jogada será sempre no primeiro quadrado(Da esquerda para a direita e de cima para baixo) 
+ * A Melhor jogada será sempre no primeiro quadrado(Da esquerda para a direita e de cima para baixo)
  * em que falta apenas um caminho a ser marcado
  * A segunda melhor será um quadrado aleatório onde faltem 4 caminhos para completar
  * A terceira melhor será um quadrado aleatório onde faltem 3 caminhos para completar
  * A ultima opção´será um quadrado aleatório onde faltem 2 caminhos para completar, dando assim um ponto para o adversário
- * TODO: Um caminho é escolhido pelo computador verificando se no quadrado formado a direita e abaixo do ponto não deixará 
+ * TODO: Um caminho é escolhido pelo computador verificando se no quadrado formado a direita e abaixo do ponto não deixará
  * apenas um caminho livre para o oponente marcar o ponto, porém não verifica os outros quadrados relacionados aquele caminho,
  * fazer com que verifique todos os quadrados relacionados ao caminho escolhido
  */
@@ -51,7 +51,7 @@ function computerChoice(data)
 	var scoreOptions = [];
 	var bestPath = {};
 	var bestPath = {one: [], two: [], three: [], four: []}
-	
+
 	// Para cada ponto do jogo analisa as possibilidades de fechar um quadrado relacionado com aquele ponto
 	for (let i in gameData) {
 		scoreOptions = getAllDotScoreOptions(i);
@@ -85,7 +85,7 @@ function computerChoice(data)
 	var choice = getRandomPath(bestPath);
 
 	connsList.push(choice);
-	
+
 	redrawBoard();
 	return;
 }
@@ -97,7 +97,7 @@ function computerChoice(data)
  *	/* Contém um array de caminhos de todos os scores possíveis onde faltam 4 caminhos para fechar a partir de um ponto
  *	four: array(
  *		/* Array com os 4 pontos necessários para fechar um score que tem relação com o ponto que foi analisado
- *		array( 
+ *		array(
  *			0: "1-1/1-2"
  *			1: "1-2/2-2"
  *			2: "2-1/2-2"
@@ -109,7 +109,7 @@ function computerChoice(data)
  * }
  */
 function getRandomPath(bestPath)
-{	
+{
 	var quadrant = 0;
 	var conn = 0;
 	var size = 0;
@@ -120,7 +120,7 @@ function getRandomPath(bestPath)
 		number = Math.round(Math.random()*size);
 		quadrant = Math.round(Math.random()*(bestPath.four[number].length - 1));
 		conn = Math.round(Math.random()*(bestPath.four[number][quadrant].length - 1));
-		
+
 		return bestPath.four[number][quadrant][conn];
 	}
 
@@ -143,7 +143,7 @@ function getRandomPath(bestPath)
 	}
 }
 
-/*	
+/*
  * Dado o id de um ponto, retorna um array contendo todos os pontos para fechar os scores relacionados aquele ponto
 */
 function getAllDotScoreOptions(dotId) {
@@ -155,7 +155,7 @@ function getAllDotScoreOptions(dotId) {
 
 	var scorePaths = [upperRightQuadrantPathArr, upperLeftQuadrantPathArr, lowerRightQuadrantPathArr, lowerLeftQuadrantPathArr];
 	var falsePaths = {one: [], two: [], three: [], four: []}
-	
+
 	for (var i in scorePaths) {
 		let connCount = 0;
 		let tempFalsePaths = [];
@@ -179,7 +179,7 @@ function getAllDotScoreOptions(dotId) {
 				tempFalsePaths.push(c);
 			}
 		}
-		
+
 		// Se um false
 		if (tempFalsePaths.length == 1) {
 			falsePaths.one.push(tempFalsePaths);
@@ -200,7 +200,7 @@ function getAllDotScoreOptions(dotId) {
 			falsePaths.four.push(tempFalsePaths);
 		}
 	}
-	
+
 	return falsePaths;
 }
 
@@ -209,7 +209,7 @@ function getAllDotScoreOptions(dotId) {
  * @param {Object} data objeto contendo todos os ponto que serão mostrados no jogo
  */
 function renderGameBoard(data)
-{	
+{
 	for (var i in data ) {
 		let dotId = i;
 		let line = parseInt(i.split('-')[0]);
@@ -220,7 +220,7 @@ function renderGameBoard(data)
 
 	document.getElementById('board-frame').style.height = data[i].posX;
 
-	for (let c in connsList) {	
+	for (let c in connsList) {
 		if (connsList[c]) {
 			let dotsId = connsList[c].split('/');
 			let originDot = dotsId[0].split('-').map((n) => parseInt(n));
@@ -241,7 +241,7 @@ function renderGameBoard(data)
 			if (originDot[0] < destinyDot[0] && originDot[1] == destinyDot[1]) {
 				direction = 'bottom';
 			}
-		
+
 			renderConnection(data[dotsId[0]].posX, data[dotsId[0]].posY, direction);
 		}
 	}
@@ -257,7 +257,7 @@ function renderDot(posX, posY, dotId)
 {
 	var dot = document.createElement('div');
 
-	dot.style = `left:${posX}px; top:${posY}px; cursor:pointer;position:absolute; width:15px; height:15px; background-color:#000; border-radius:50%`;
+	dot.style = `left:${posX}px; top:${posY}px; cursor:pointer;position:absolute; width:15px; height:15px; background-color:#2f3640; border-radius:60%`;
 	dot.id = dotId;
 
 	dot.onclick = (e) => {handleDotClick(e)};
@@ -305,8 +305,7 @@ function renderConnection(posX, posY, direction)
 		posX += 5;
 	}
 
-	conn.style = `z-index: -1;left: ${posX}px; top: ${posY}px; position: absolute;width: ${width}; height: ${height}; background-color:
-	black;`;
+	conn.style = `z-index: -1;left: ${posX}px; top: ${posY}px; position: absolute;width: ${width}; height: ${height}; background-color:#353b48;`;
 
 	document.getElementById('board-frame').appendChild(conn);
 }
@@ -320,10 +319,11 @@ function renderConnection(posX, posY, direction)
  */
 function renderScores(posX, posY, dotId, player)
 {
-	var color = player == 'com' ? 'red' : 'blue';
+	//var color = player == 'com' ? 'red' : 'blue';
+  var color = player == 'com' ? '#e74c3c' : '#2ecc71';
 
 	var square = document.createElement('div');
-	
+
 	square.style = `left:${posX+7}px; top:${posY+7}px;position:absolute; width:50px; height:50px; background-color:${color};z-index:-1`;
 	square.id = 'score-'+dotId;
 
@@ -335,7 +335,7 @@ function renderScores(posX, posY, dotId, player)
  * Ação disparada no evento onclick dos pontos na tela, recebe o evento como parametro
  * TODO: Nâo redesenhar o board ao adicionar uma conexão, chamar diretamente a função para desenhar a mesma
  */
-function handleDotClick(e) 
+function handleDotClick(e)
 {
 	if (lastClicked == null) {
 		lastClicked = e.target;
@@ -345,7 +345,7 @@ function handleDotClick(e)
 	var id = e.target.id;
 	var path = id.split('-');
 	var lastClikedId = lastClicked.id;
-	
+
 	if (setConnection(id, lastClikedId)) {
 		lastClicked = null;
 		scored = setScores(id, 'me');
@@ -374,9 +374,9 @@ function getQuadrantPathStatus(quadrantPathArr)
 	result[quadrantPathArr[3]] = connsList.indexOf(quadrantPathArr[3]) > -1;
 
 	if (
-		result[quadrantPathArr[0]] && 
-		result[quadrantPathArr[1]] && 
-		result[quadrantPathArr[2]] && 
+		result[quadrantPathArr[0]] &&
+		result[quadrantPathArr[1]] &&
+		result[quadrantPathArr[2]] &&
 		result[quadrantPathArr[3]]
 	) {
 		result['completed'] = true;
@@ -402,28 +402,28 @@ function setScores(id, player) {
 	// Quadrante superior direito
 	if (
 		scores.upperRightQuadrantPathArr != null &&
-		getQuadrantPathStatus(scores.upperRightQuadrantPathArr).completed && 
+		getQuadrantPathStatus(scores.upperRightQuadrantPathArr).completed &&
 		checkScoreIsAvailable(scores.upperRightQuadrantPathArr, player)
 	) {tempScore += 1;}
-	
+
 	// Quadrante superior esquerdo
 	if (
 		scores.upperLeftQuadrantPathArr != null &&
 		getQuadrantPathStatus(scores.upperLeftQuadrantPathArr).completed &&
 		checkScoreIsAvailable(scores.upperLeftQuadrantPathArr, player)
 	) {tempScore += 1;}
-	
+
 	// Quadrante inferior direito
 	if (
 		scores.lowerRightQuadrantPathArr != null &&
 		getQuadrantPathStatus(scores.lowerRightQuadrantPathArr).completed &&
 		checkScoreIsAvailable(scores.lowerRightQuadrantPathArr, player)
 	) {tempScore += 1;}
-	
+
 	// Quadrante inferior esquerdo
 	if (
 		scores.lowerLeftQuadrantPathArr != null &&
-		getQuadrantPathStatus(scores.lowerLeftQuadrantPathArr).completed && 
+		getQuadrantPathStatus(scores.lowerLeftQuadrantPathArr).completed &&
 		checkScoreIsAvailable(scores.lowerLeftQuadrantPathArr, player)
 	) {tempScore += 1;}
 
@@ -461,50 +461,50 @@ function getDotPositionsArr(line, col)
 
 	obj.originToRight = obj.originDot +'/'+ obj.rightDot
 	obj.originToLower = obj.originDot +'/'+ obj.lowerDot;
-	
+
 	obj.upperToOrigin = obj.upperDot +'/'+ obj.originDot;
 	obj.upperRightToRight = obj.upperRightDot +'/'+ obj.rightDot;
 	obj.upperToUpperRight = obj.upperDot +'/'+ obj.upperRightDot;
 	obj.upperLeftToLeft = obj.upperLeftDot +'/'+ obj.leftDot;
 	obj.upperLeftToUpper = obj.upperLeftDot +'/'+ obj.upperDot;
-	
+
 	obj.leftToOrigin = obj.leftDot +'/'+ obj.originDot;
 	obj.leftToLowerLeft = obj.leftDot +'/'+ obj.lowerLeftDot;
-	
+
 	obj.rightToLowerRight = obj.rightDot +'/'+ obj.lowerRightDot;
 
 	obj.lowerLeftToLower = obj.lowerLeftDot +'/'+ obj.lowerDot;
 	obj.lowerToLowerRight = obj.lowerDot +'/'+ obj.lowerRightDot;
-	
+
 	// Array com os caminhos para formar o quadrante superior direito em relação um ponto
 	obj.upperRightQuadrantPathArr = [
-		obj.originToRight, 
-		obj.upperRightToRight, 
-		obj.upperToUpperRight, 
+		obj.originToRight,
+		obj.upperRightToRight,
+		obj.upperToUpperRight,
 		obj.upperToOrigin
 	];
-	
+
 	// Array com os caminhos para formar o quadrante superior esquerdo em relação um ponto
 	obj.upperLeftQuadrantPathArr = [
-		obj.leftToOrigin, 
-		obj.upperLeftToLeft, 
-		obj.upperLeftToUpper, 
+		obj.leftToOrigin,
+		obj.upperLeftToLeft,
+		obj.upperLeftToUpper,
 		obj.upperToOrigin
 	];
 
 	// Array com os caminhos para formar o quadrante inferior direito em relação um ponto
 	obj.lowerRightQuadrantPathArr = [
-		obj.originToRight, 
-		obj.rightToLowerRight, 
-		obj.lowerToLowerRight, 
+		obj.originToRight,
+		obj.rightToLowerRight,
+		obj.lowerToLowerRight,
 		obj.originToLower
 	];
-	
+
 	// Array com os caminhos para formar o quadrante inferior esquerdo em relação um ponto
 	obj.lowerLeftQuadrantPathArr = [
-		obj.leftToOrigin, 
-		obj.leftToLowerLeft, 
-		obj.lowerLeftToLower, 
+		obj.leftToOrigin,
+		obj.leftToLowerLeft,
+		obj.lowerLeftToLower,
 		obj.originToLower
 	];
 
@@ -606,14 +606,14 @@ function getDotPositionsArr(line, col)
  * onde ao clicar em um ponto que fazia parte de um quadrado já fechado, era executada a validação para os possíveis quadrados
  * daquele ponto, e acabava computando novamente aquele quadrado
  */
-function checkScoreIsAvailable(score, player) 
-{	
+function checkScoreIsAvailable(score, player)
+{
 	// junta o array de caminhos em uma string
-	var scoreStr = score.join('/'); 
+	var scoreStr = score.join('/');
 	var initialDotId = getLowerDotFromPathArr(score);
-	
+
 	// divide a string em um array com a posição de cada ponto
-	scoreStr = scoreStr.split('/'); 
+	scoreStr = scoreStr.split('/');
 	scoreStr.sort();
 	scoreStr = scoreStr.join(',');
 
@@ -633,7 +633,7 @@ function getLowerDotFromPathArr(pathArr) {
 
 	for (let i in pathArr) {
 		// Pega só o primeiro ponto pois o path sempre é salvo do menor para o maior
-		let dotId = pathArr[i].split('/')[0]; 
+		let dotId = pathArr[i].split('/')[0];
 
 		line = parseInt(dotId.split('-')[0]);
 		col = parseInt(dotId.split('-')[1]);
@@ -662,7 +662,7 @@ var connsList = [];
  * @param id {String} id do ponto que foi clicado anteriormente
  */
 function setConnection(id, lastClickedId)
-{	
+{
 	var path = id + '/' + lastClickedId;
 	var reversePath = lastClickedId + '/' + id;
 
@@ -675,7 +675,7 @@ function setConnection(id, lastClickedId)
 	var col = parseInt(arr[1]);
 	var lastLine = parseInt(lastArr[0]);
 	var lastCol = parseInt(lastArr[1]);
-	
+
 	// Não importa a ordem do clique, sempre guarda o caminho que seja do menor ponto para o maior
 	if (line > lastLine || (line == lastLine && col > lastCol)) {
 		connPath = lastClickedId + '/' + id;
@@ -703,7 +703,7 @@ function checkConnectionIsAllowed(id, lastClickedId)
 	var col = parseInt(pos[1]);
 	var lastLine = parseInt(lastPos[0]);
 	var lastCol = parseInt(lastPos[1]);
-	
+
 	// Se clicar no mesmo ponto
 	if (line == lastLine && col == lastCol) {
 		return false;
@@ -711,7 +711,7 @@ function checkConnectionIsAllowed(id, lastClickedId)
 
 	// Se for a mesma linha
 	if (line == lastLine) {
-		
+
 		// Se for a coluna anterior
 		if (col == (lastCol - 1)) return true;
 
@@ -723,7 +723,7 @@ function checkConnectionIsAllowed(id, lastClickedId)
 
 	// Se for a mesma coluna
 	if (col == lastCol) {
-		
+
 		// Se for a linha anterior
 		if (line == (lastLine - 1)) return true;
 
