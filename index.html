@@ -2,11 +2,16 @@
 <html>
 <head>
 	<title>Joguinho</title>
+	<link href="https://fonts.googleapis.com/css?family=Comfortaa" rel="stylesheet">
 	<style type="text/css">
-
-		#container {
+		#wrapper {
 			display: flex;
-			flex-direction: column;
+    	flex-direction: column-reverse;
+    	justify-content: center;
+		}
+		#container {
+			position: relative;
+			align-self: center;
 		}
 
 		#board-frame {
@@ -15,16 +20,33 @@
 		}
 
 		#score-frame {
+			    align-self: center;
+					font-family: 'Comfortaa', cursive;
+					color:#2f3640;
+		}
+
+		#playerScore{
+					color:#2ecc71;
+					font-weight: 1000;
+		}
+
+		#computerScore{
+					color:#e74c3c;
+					font-weight: 1000;
 		}
 
 	</style>
 </head>
 <body>
-	<div id="container">
-		<div id="board-frame"></div>
-		<div id="score-frame">
-		</div>
+	<div id="wrapper">
+		<div id="score-frame">Player: <span id="playerScore">0</span> Computer: <span id="computerScore">0</span></div>
+			<div id="container">
+				<div id="board-frame"></div>
+			</div>
 	</div>
+
+
+
 	<script type="text/javascript" src="./script.js"></script>
 </body>
 </html>

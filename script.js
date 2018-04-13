@@ -245,6 +245,11 @@ function renderGameBoard(data)
 			renderConnection(data[dotsId[0]].posX, data[dotsId[0]].posY, direction);
 		}
 	}
+
+	var w = document.getElementById('container');
+	w.style.width = gameSize * 50 + 'px';
+	w.style.height = gameSize * 50 + 'px';
+	console.log(w)
 }
 
 /**
@@ -429,9 +434,12 @@ function setScores(id, player) {
 
 	score[player] += tempScore;
 
+	document.getElementById('playerScore').innerHTML = score.me;
+	document.getElementById('computerScore').innerHTML = score.com;
+
 	if (tempScore > 0) {
 		return true;
-	}
+  }
 
 	return false;
 }
