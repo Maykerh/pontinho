@@ -1,4 +1,4 @@
-var gameSize = 5;
+var gameSize = 7;
 var totalGameSquares = (gameSize - 1)*(gameSize - 1);
 var gameData = generateGameData(gameSize);
 var currentStreak = 0;
