@@ -22,7 +22,17 @@
 		#score-frame {
 			    align-self: center;
 					font-family: 'Comfortaa', cursive;
+					font-size: 18px;
 					color:#2f3640;
+					padding-top: 5px;
+		}
+
+		#game-result {
+			    align-self: center;
+					font-family: 'Comfortaa', cursive;
+					color:#2f3640;
+					font-size: 40px;
+					padding-top: 20px;
 		}
 
 		#playerScore{
@@ -39,13 +49,12 @@
 </head>
 <body>
 	<div id="wrapper">
-		<div id="score-frame">Player: <span id="playerScore">0</span> Computer: <span id="computerScore">0</span></div>
+		<div id="game-result"></div>
+		<div id="score-frame">You: <span id="playerScore">0</span> Computer: <span id="computerScore">0</span></div>
 			<div id="container">
 				<div id="board-frame"></div>
 			</div>
 	</div>
-
-
 
 	<script type="text/javascript" src="./script.js"></script>
 </body>

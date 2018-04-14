@@ -1,5 +1,7 @@
-var gameSize = 7;
+var gameSize = 5;
+var totalGameSquares = (gameSize - 1)*(gameSize - 1);
 var gameData = generateGameData(gameSize);
+var currentStreak = 0;
 var lastClicked = null;
 var score = {me: 0, com: 0};
 var doneScores = [];
@@ -60,7 +62,7 @@ function computerChoice(data)
 		if (scoreOptions.one.length > 0) {
 			connsList.push(scoreOptions.one[0][0]);
 			redrawBoard();
-			setScores(i, 'com')
+			setScores(i, 'com');
 			computerChoice();
 			return;
 		}
@@ -340,8 +342,9 @@ function renderScores(posX, posY, dotId, player)
  * Ação disparada no evento onclick dos pontos na tela, recebe o evento como parametro
  * TODO: Nâo redesenhar o board ao adicionar uma conexão, chamar diretamente a função para desenhar a mesma
  */
-function handleDotClick(e)
-{
+function handleDotClick(e){
+	var currentFilledSquares = 0;
+
 	if (lastClicked == null) {
 		lastClicked = e.target;
 		return;
@@ -356,8 +359,19 @@ function handleDotClick(e)
 		scored = setScores(id, 'me');
 		redrawBoard();
 
+		currentFilledSquares = score.me + score.com;
+
 		if (!scored) {
+			currentStreak = 0;
+			if(currentFilledSquares != totalGameSquares){
+				document.getElementById('game-result').innerHTML = '';
+			}
 			computerChoice();
+		}else{
+			currentStreak += 1;
+			if(currentStreak > 1 && currentFilledSquares != totalGameSquares){
+				document.getElementById('game-result').innerHTML = 'STREAK!!! +' + currentStreak;
+			}
 		}
 	} else {
 		lastClicked = e.target;
@@ -403,6 +417,7 @@ function setScores(id, player) {
 	var col = parseInt(idArr[1]);
 	var scores = getDotPositionsArr(line, col);
 	var tempScore = 0;
+	var currentFilledSquares = 0;
 
 	// Quadrante superior direito
 	if (
@@ -436,6 +451,19 @@ function setScores(id, player) {
 
 	document.getElementById('playerScore').innerHTML = score.me;
 	document.getElementById('computerScore').innerHTML = score.com;
+
+	currentFilledSquares = score.me + score.com;
+
+	//set the Game Winner
+	if(currentFilledSquares == totalGameSquares){
+		if(score.me > score.com){
+			document.getElementById('game-result').innerHTML = 'YOU WIN!';
+		}else if (score.me < score.com) {
+			document.getElementById('game-result').innerHTML = 'COMPUTER WINS!';
+		}else{
+			document.getElementById('game-result').innerHTML = 'DRAW!';
+		}
+	}
 
 	if (tempScore > 0) {
 		return true;
